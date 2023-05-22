@@ -1,0 +1,58 @@
+#!/bin/bash
+
+function usage {
+ printf "Usage: %s [<-s|-script|--script> script ] [<-p|-path|--path> path]\n" "                                                          $0";
+ return 1;
+}
+
+scriptname=""
+path=""
+use=false
+
+if [ "$#" -eq 0 ]; then
+ usage
+ exit
+fi
+
+while [ "$#" -ge 1 ]; do
+ case "$1" in
+  -s|-script|--script)
+  shift
+  scriptname="${1:?$(usage)}"
+  ;;
+  -p|-path|--path)
+  shift
+  path="${1:?$(usage)}"
+  ;;
+  *)
+  usage
+  exit 1
+  ;;
+  esac
+ shift
+done
+
+# main test
+
+if [ -z ${scriptname} ]
+then
+ usage
+ exit
+fi
+
+if [ -z ${path} ]
+then
+ echo "path set to $PWD"
+ path=$PWD
+fi
+
+path=$(echo ${path/%\//})
+
+if [ -f ${path}/${scriptname} ]
+then
+ echo "File ${path}/${scriptname} is in the system"
+ exit
+fi
+
+cp /storage/scripts/bin/default ${path}/${scriptname}
+
